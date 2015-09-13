@@ -60,11 +60,7 @@ public class PassBonePositions : MonoBehaviour {
                 continue;
             }
             if (body.IsTracked) {
-                if (!_Bodies.ContainsKey(body.TrackingId)) {
-                    _Bodies[body.TrackingId] = CreateBodyObject(body.TrackingId);
-                }
-
-                RefreshBodyObject(body, _Bodies[body.TrackingId]);
+                RefreshBodyObject(body);
             }
         }
     }
@@ -73,26 +69,8 @@ public class PassBonePositions : MonoBehaviour {
         return _Bodies.Count > 0;
     }
 
-    private GameObject CreateBodyObject(ulong id) {
-        GameObject body = new GameObject("Body:" + id);
 
-        for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++) {
-            GameObject jointObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-
-            LineRenderer lr = jointObj.AddComponent<LineRenderer>();
-            lr.SetVertexCount(2);
-            lr.material = BoneMaterial;
-            lr.SetWidth(0.05f, 0.05f);
-
-            jointObj.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-            jointObj.name = jt.ToString();
-            jointObj.transform.parent = body.transform;
-        }
-
-        return body;
-    }
-
-    private void RefreshBodyObject(Kinect.Body body, GameObject bodyObject) {
+    private void RefreshBodyObject(Kinect.Body body) {
         for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++) {
             Kinect.Joint sourceJoint = body.Joints[jt];
             Transform jointObj = bodyView.transform.FindChild(jt.ToString());
